@@ -2,80 +2,127 @@ package provider
 
 import (
 	"context"
-	"net/http"
+	"os"
 
+	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
-// Ensure ScaffoldingProvider satisfies various provider interfaces.
-var _ provider.Provider = &ScaffoldingProvider{}
+// Ensure KevelProvider satisfies various provider interfaces.
+var (
+	_ provider.Provider = &KevelProvider{}
+)
 
-// ScaffoldingProvider defines the provider implementation.
-type ScaffoldingProvider struct {
+// KevelProvider defines the provider implementation.
+type KevelProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// ScaffoldingProviderModel describes the provider data model.
-type ScaffoldingProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+// KevelProviderModel describes the provider data model.
+type KevelProviderModel struct {
+	ApiBaseUrl types.String `tfsdk:"api_base_url"`
+	ApiKey     types.String `tfsdk:"api_key"`
 }
 
-func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
+func (p *KevelProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "kevel"
 	resp.Version = p.version
 }
 
-func (p *ScaffoldingProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
-				Optional:            true,
+			"api_base_url": schema.StringAttribute{
+				Description: "The base URL of the Kevel API. This can also be set via the KEVEL_API_BASE_URL environment variable.",
+				Optional:    true,
+			},
+			"api_key": schema.StringAttribute{
+				Description: "Your Kevel API Key. This can also be set via the KEVEL_API_KEY environment variable.",
+				Optional:    true,
+				Sensitive:   true,
 			},
 		},
 	}
 }
 
-func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data ScaffoldingProviderModel
+func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	var data KevelProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
+	var apiBaseUrl string
+	if !data.ApiBaseUrl.IsNull() {
+		apiBaseUrl = data.ApiBaseUrl.ValueString()
+	} else {
+		kevelApiBaseUrl, found := os.LookupEnv("KEVEL_API_BASE_URL")
+		if found {
+			apiBaseUrl = kevelApiBaseUrl
+		} else {
+			apiBaseUrl = "https://api.kevel.co/"
+		}
+	}
 
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
+	if apiBaseUrl == "" {
+		resp.Diagnostics.AddError("Error configuring client", "No API base URL provided")
+		return
+	}
+
+	var apiKey string
+	if !data.ApiKey.IsNull() {
+		apiKey = data.ApiKey.ValueString()
+	} else {
+		apiKey = os.Getenv("KEVEL_API_KEY")
+	}
+
+	if apiKey == "" {
+		resp.Diagnostics.AddError("Error configuring client", "No API key provided")
+		return
+	}
+
+	apiKeySecurityProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-Adzerk-ApiKey", apiKey)
+	if err != nil {
+		resp.Diagnostics.AddError("Error configuring client", err.Error())
+		return
+	}
+
+	client, err := adzerk.NewClientWithResponses(apiBaseUrl, adzerk.WithRequestEditorFn(apiKeySecurityProvider.Intercept))
+	if err != nil {
+		resp.Diagnostics.AddError("Error configuring client", err.Error())
+		return
+	}
+
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
 
-func (p *ScaffoldingProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *KevelProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewExampleResource,
+		NewAdTypeResource,
+		NewChannelResource,
+		NewChannelSiteMapResource,
+		NewSiteResource,
 	}
 }
 
-func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewExampleDataSource,
-	}
+func (p *KevelProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &ScaffoldingProvider{
+		return &KevelProvider{
 			version: version,
 		}
 	}
