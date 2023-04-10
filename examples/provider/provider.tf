@@ -1,3 +1,3 @@
-provider "scaffolding" {
+provider "kevel" {
   # example configuration here
 }

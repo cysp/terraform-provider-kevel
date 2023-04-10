@@ -1,4 +1,4 @@
-module github.com/hashicorp/terraform-provider-scaffolding-framework
+module github.com/cysp/terraform-provider-kevel
 
 go 1.19
 
