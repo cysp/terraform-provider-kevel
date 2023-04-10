@@ -2,13 +2,15 @@ package provider
 
 import (
 	"context"
-	"net/http"
 
+	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	adzerkManagementSdk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 // Ensure KevelProvider satisfies various provider interfaces.
@@ -24,7 +26,8 @@ type KevelProvider struct {
 
 // KevelProviderModel describes the provider data model.
 type KevelProviderModel struct {
-	Endpoint types.String `tfsdk:"endpoint"`
+	ApiBaseUrl types.String `tfsdk:"api_base_url"`
+	ApiKey     types.String `tfsdk:"api_key"`
 }
 
 func (p *KevelProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
@@ -35,9 +38,14 @@ func (p *KevelProvider) Metadata(ctx context.Context, req provider.MetadataReque
 func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
-			"endpoint": schema.StringAttribute{
-				MarkdownDescription: "Example provider attribute",
-				Optional:            true,
+			"api_base_url": schema.StringAttribute{
+				Description: "The base URL of the Kevel API.",
+				Optional:    true,
+			},
+			"api_key": schema.StringAttribute{
+				Description: "Your Kevel API Key.",
+				Required:    true,
+				Sensitive:   true,
 			},
 		},
 	}
@@ -52,25 +60,40 @@ func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
+	apiKeySecurityProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-Adzerk-ApiKey", data.ApiKey.ValueString())
+	if err != nil {
+		resp.Diagnostics.AddError("Error configuring client", err.Error())
+		return
+	}
 
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
+	var apiBaseUrl string
+	if data.ApiBaseUrl.IsUnknown() {
+		apiBaseUrl = "https://api.kevel.co/"
+	} else {
+		apiBaseUrl = data.ApiBaseUrl.ValueString()
+	}
+
+	client, err := adzerkManagementSdk.NewClientWithResponses(apiBaseUrl, adzerkManagementSdk.WithRequestEditorFn(apiKeySecurityProvider.Intercept))
+	if err != nil {
+		resp.Diagnostics.AddError("Error configuring client", err.Error())
+		return
+	}
+
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
 
 func (p *KevelProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewExampleResource,
+		NewAdTypeResource,
+		NewChannelResource,
+		NewChannelSiteMapResource,
+		NewSiteResource,
 	}
 }
 
 func (p *KevelProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
-	return []func() datasource.DataSource{
-		NewExampleDataSource,
-	}
+	return []func() datasource.DataSource{}
 }
 
 func New(version string) func() provider.Provider {

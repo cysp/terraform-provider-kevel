@@ -15,7 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 
-	kevelManagementClient "github.com/cysp/terraform-provider-kevel/kevel-management-client"
+	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
 
 var (
