@@ -52,10 +52,10 @@ type CreativeTemplateResourceModelField struct {
 	Default     types.Map    `tfsdk:"default"`
 }
 
-func (CreativeTemplate *CreativeTemplateResourceModel) createRequestBody() map[string]interface{} {
+func (m *CreativeTemplateResourceModel) createRequestBody() map[string]interface{} {
 	body := make(map[string]interface{}, 4)
-	body["Id"] = CreativeTemplate.Id.ValueInt64()
-	body["Name"] = CreativeTemplate.Name.ValueString()
+	AddInt64ValueToMap(&body, "Id", m.Id)
+	AddStringValueToMap(&body, "Name", m.Name)
 	// body["Width"] = CreativeTemplate.Width.ValueInt64()
 	// body["Height"] = CreativeTemplate.Height.ValueInt64()
 	return body

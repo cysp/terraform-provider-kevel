@@ -37,29 +37,25 @@ type siteResourceModel struct {
 	Url   types.String `tfsdk:"url"`
 }
 
-func (site *siteResourceModel) createRequestBody() kevelManagementClient.CreateSiteJSONRequestBody {
-	return kevelManagementClient.CreateSiteJSONRequestBody{
-		Title: site.Title.ValueString(),
-		URL:   site.Url.ValueString(),
-	}
+func (m *siteResourceModel) createRequestBody() map[string]interface{} {
+	body := make(map[string]interface{})
+	AddStringValueToMap(&body, "Title", m.Title)
+	AddStringValueToMap(&body, "URL", m.Url)
+	return body
 }
 
-func (site *siteResourceModel) updateRequestBody() kevelManagementClient.UpdateSiteJSONRequestBody {
-	return kevelManagementClient.UpdateSiteJSONRequestBody{
-		Id:    int32(site.Id.ValueInt64()),
-		Title: site.Title.ValueString(),
-		URL:   site.Url.ValueString(),
-	}
+func (m *siteResourceModel) updateRequestBody() map[string]interface{} {
+	body := make(map[string]interface{})
+	AddInt64ValueToMap(&body, "Id", m.Id)
+	AddStringValueToMap(&body, "Title", m.Title)
+	AddStringValueToMap(&body, "URL", m.Url)
+	return body
 }
 
-func (site *siteResourceModel) deleteRequestBody() kevelManagementClient.UpdateSiteJSONRequestBody {
-	isDeleted := true
-	return kevelManagementClient.UpdateSiteJSONRequestBody{
-		Id:        int32(site.Id.ValueInt64()),
-		Title:     site.Title.ValueString(),
-		URL:       site.Url.ValueString(),
-		IsDeleted: &isDeleted,
-	}
+func (m *siteResourceModel) deleteRequestBody() map[string]interface{} {
+	body := m.updateRequestBody()
+	body["IsDeleted"] = true
+	return body
 }
 
 func setStateWithSite(s *tfsdk.State, ctx context.Context, site *kevelManagementClient.Site) diag.Diagnostics {

@@ -38,11 +38,11 @@ type channelSiteMapResourceModel struct {
 	Priority  types.Int64 `tfsdk:"priority"`
 }
 
-func (site *channelSiteMapResourceModel) createRequestBody() map[string]interface{} {
+func (m *channelSiteMapResourceModel) createRequestBody() map[string]interface{} {
 	body := make(map[string]interface{}, 3)
-	body["ChannelId"] = site.ChannelId.ValueInt64()
-	body["SiteId"] = site.SiteId.ValueInt64()
-	body["Priority"] = site.Priority.ValueInt64()
+	AddInt64ValueToMap(&body, "ChannelId", m.ChannelId)
+	AddInt64ValueToMap(&body, "SiteId", m.SiteId)
+	AddInt64ValueToMap(&body, "Priority", m.Priority)
 	return body
 }
 

@@ -39,12 +39,13 @@ type adTypeResourceModel struct {
 	Height types.Int64  `tfsdk:"height"`
 }
 
-func (adType *adTypeResourceModel) createRequestBody() kevelManagementClient.CreateAdTypeJSONRequestBody {
-	return kevelManagementClient.CreateAdTypeJSONRequestBody{
-		Name:   adType.Name.ValueStringPointer(),
-		Width:  int32(*adType.Width.ValueInt64Pointer()),
-		Height: int32(*adType.Height.ValueInt64Pointer()),
-	}
+func (adType *adTypeResourceModel) createRequestBody() map[string]interface{} {
+	body := make(map[string]interface{})
+	AddInt64ValueToMap(&body, "Id", adType.Id)
+	AddStringValueToMap(&body, "Name", adType.Name)
+	AddInt64ValueToMap(&body, "Width", adType.Width)
+	AddInt64ValueToMap(&body, "Height", adType.Height)
+	return body
 }
 
 func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManagementClient.AdType) diag.Diagnostics {

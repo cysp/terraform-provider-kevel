@@ -39,28 +39,22 @@ type channelResourceModel struct {
 	AdTypes []types.Int64 `tfsdk:"ad_types"`
 }
 
-func (channel *channelResourceModel) createRequestBody() kevelManagementClient.CreateChannelJSONRequestBody {
+func (channel *channelResourceModel) createRequestBody() map[string]interface{} {
 	bodyAdTypes := make([]int32, len(channel.AdTypes))
 	for itemIndex, item := range channel.AdTypes {
 		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
 	}
-	return kevelManagementClient.CreateChannelJSONRequestBody{
-		Title:   channel.Title.ValueString(),
-		AdTypes: bodyAdTypes,
-		Engine:  0,
-	}
+
+	body := make(map[string]interface{})
+	AddStringValueToMap(&body, "Title", channel.Title)
+	body["Engine"] = 0
+	return body
 }
-func (channel *channelResourceModel) updateRequestBody() kevelManagementClient.UpdateChannelJSONRequestBody {
-	bodyAdTypes := make([]int32, len(channel.AdTypes))
-	for itemIndex, item := range channel.AdTypes {
-		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
-	}
-	return kevelManagementClient.UpdateChannelJSONRequestBody{
-		Id:      int32(channel.Id.ValueInt64()),
-		Title:   channel.Title.ValueString(),
-		AdTypes: bodyAdTypes,
-		Engine:  0,
-	}
+
+func (channel *channelResourceModel) updateRequestBody() map[string]interface{} {
+	body := channel.createRequestBody()
+	AddInt64ValueToMap(&body, "Id", channel.Id)
+	return body
 }
 
 func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *kevelManagementClient.Channel) diag.Diagnostics {
