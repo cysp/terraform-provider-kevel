@@ -45,10 +45,8 @@ func (m *siteResourceModel) createRequestBody() map[string]interface{} {
 }
 
 func (m *siteResourceModel) updateRequestBody() map[string]interface{} {
-	body := make(map[string]interface{})
+	body := m.createRequestBody()
 	AddInt64ValueToMap(&body, "Id", m.Id)
-	AddStringValueToMap(&body, "Title", m.Title)
-	AddStringValueToMap(&body, "URL", m.Url)
 	return body
 }
 

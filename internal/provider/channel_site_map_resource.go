@@ -13,7 +13,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -49,8 +48,6 @@ func (m *channelSiteMapResourceModel) createRequestBody() map[string]interface{}
 func setStateWithChannelSiteMap(s *tfsdk.State, ctx context.Context, channelSiteMap *kevelManagementClient.ChannelSiteMap) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
-	tflog.Debug(ctx, "setStateWithChannelSiteMap", map[string]interface{}{"channelSiteMap": channelSiteMap})
-
 	if channelSiteMap == nil {
 		diags.AddError("Error", "channel site map is nil")
 		return diags
@@ -82,6 +79,7 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 				Required:    true,
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
+					int64planmodifier.RequiresReplace(),
 				},
 			},
 			"site_id": schema.Int64Attribute{
@@ -89,6 +87,7 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 				Required:    true,
 				PlanModifiers: []planmodifier.Int64{
 					int64planmodifier.UseStateForUnknown(),
+					int64planmodifier.RequiresReplace(),
 				},
 			},
 			"priority": schema.Int64Attribute{

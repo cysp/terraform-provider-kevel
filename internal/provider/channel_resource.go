@@ -17,7 +17,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
-	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -42,22 +41,22 @@ type channelResourceModel struct {
 	AdTypes []types.Int64 `tfsdk:"ad_types"`
 }
 
-func (channel *channelResourceModel) createRequestBody() map[string]interface{} {
-	bodyAdTypes := make([]int32, len(channel.AdTypes))
-	for itemIndex, item := range channel.AdTypes {
+func (m *channelResourceModel) createRequestBody() map[string]interface{} {
+	bodyAdTypes := make([]int32, len(m.AdTypes))
+	for itemIndex, item := range m.AdTypes {
 		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
 	}
 
 	body := make(map[string]interface{})
-	AddStringValueToMap(&body, "Title", channel.Title)
+	AddStringValueToMap(&body, "Title", m.Title)
 	body["AdTypes"] = bodyAdTypes
 	body["Engine"] = 0
 	return body
 }
 
-func (channel *channelResourceModel) updateRequestBody() map[string]interface{} {
-	body := channel.createRequestBody()
-	AddInt64ValueToMap(&body, "Id", channel.Id)
+func (m *channelResourceModel) updateRequestBody() map[string]interface{} {
+	body := m.createRequestBody()
+	AddInt64ValueToMap(&body, "Id", m.Id)
 	return body
 }
 
@@ -201,8 +200,6 @@ func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	channel := response.JSON200
-
-	tflog.Debug(ctx, "Updated channel", map[string]interface{}{"response": response.Status()})
 
 	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, channel)...)
 }
