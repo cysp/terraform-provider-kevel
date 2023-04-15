@@ -103,12 +103,18 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 	}
 }
 
-func (r *channelSiteMapResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+func (r *channelSiteMapResource) Configure(_ context.Context, req resource.ConfigureRequest, res *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
-	r.client = req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	if !ok {
+		res.Diagnostics.AddError("Error", "Could not get client from provider data")
+		return
+	}
+
+	r.client = client
 }
 
 func (r *channelSiteMapResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {

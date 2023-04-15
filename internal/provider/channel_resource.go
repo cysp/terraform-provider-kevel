@@ -125,12 +125,18 @@ func (r *channelResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 	}
 }
 
-func (r *channelResource) Configure(_ context.Context, req resource.ConfigureRequest, _ *resource.ConfigureResponse) {
+func (r *channelResource) Configure(_ context.Context, req resource.ConfigureRequest, res *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
-	r.client = req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	if !ok {
+		res.Diagnostics.AddError("Error", "Could not get client from provider data")
+		return
+	}
+
+	r.client = client
 }
 
 func (r *channelResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
