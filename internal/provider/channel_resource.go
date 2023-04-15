@@ -15,6 +15,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -47,6 +48,7 @@ func (channel *channelResourceModel) createRequestBody() map[string]interface{} 
 
 	body := make(map[string]interface{})
 	AddStringValueToMap(&body, "Title", channel.Title)
+	body["AdTypes"] = bodyAdTypes
 	body["Engine"] = 0
 	return body
 }
@@ -189,6 +191,8 @@ func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest
 	}
 
 	channel := response.JSON200
+
+	tflog.Debug(ctx, "Updated channel", map[string]interface{}{"response": response.Status()})
 
 	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, channel)...)
 }
