@@ -3,7 +3,7 @@ module github.com/cysp/terraform-provider-kevel
 go 1.19
 
 require (
-	github.com/cysp/adzerk-management-sdk-go v0.0.0-20230410065305-2e6450728a50
+	github.com/cysp/adzerk-management-sdk-go v0.0.0-20230415060421-bbfc605c3345
 	github.com/deepmap/oapi-codegen v1.12.4
 	github.com/hashicorp/terraform-plugin-docs v0.14.1
 	github.com/hashicorp/terraform-plugin-framework v1.2.0
@@ -17,6 +17,7 @@ require (
 	github.com/Masterminds/semver/v3 v3.1.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.2 // indirect
 	github.com/agext/levenshtein v1.2.2 // indirect
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/apparentlymart/go-textseg/v13 v13.0.0 // indirect
 	github.com/armon/go-radix v1.0.0 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
