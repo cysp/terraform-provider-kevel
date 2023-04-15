@@ -16,8 +16,8 @@ func TestAccChannelResource(t *testing.T) {
 			{
 				Config: testAccExampleResourceConfig("one"),
 				Check: resource.ComposeAggregateTestCheckFunc(
+					resource.TestCheckResourceAttrSet("kevel_channel.test", "id"),
 					resource.TestCheckResourceAttr("kevel_channel.test", "title", "one"),
-					resource.TestCheckResourceAttr("kevel_channel.test", "id", "example-id"),
 				),
 			},
 			// ImportState testing

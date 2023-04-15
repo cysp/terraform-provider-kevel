@@ -2,6 +2,7 @@ package provider
 
 import (
 	"context"
+	"os"
 
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -14,7 +15,9 @@ import (
 )
 
 // Ensure KevelProvider satisfies various provider interfaces.
-var _ provider.Provider = &KevelProvider{}
+var (
+	_ provider.Provider = &KevelProvider{}
+)
 
 // KevelProvider defines the provider implementation.
 type KevelProvider struct {
@@ -44,7 +47,7 @@ func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 			},
 			"api_key": schema.StringAttribute{
 				Description: "Your Kevel API Key.",
-				Required:    true,
+				Optional:    true,
 				Sensitive:   true,
 			},
 		},
@@ -60,17 +63,34 @@ func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	apiKeySecurityProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-Adzerk-ApiKey", data.ApiKey.ValueString())
-	if err != nil {
-		resp.Diagnostics.AddError("Error configuring client", err.Error())
+	var apiBaseUrl string
+	if !data.ApiBaseUrl.IsNull() {
+		apiBaseUrl = data.ApiBaseUrl.ValueString()
+	} else {
+		apiBaseUrl = "https://api.kevel.co/"
+	}
+
+	if apiBaseUrl == "" {
+		resp.Diagnostics.AddError("Error configuring client", "No API base URL provided")
 		return
 	}
 
-	var apiBaseUrl string
-	if data.ApiBaseUrl.IsUnknown() {
-		apiBaseUrl = "https://api.kevel.co/"
+	var apiKey string
+	if !data.ApiKey.IsNull() {
+		apiKey = data.ApiKey.ValueString()
 	} else {
-		apiBaseUrl = data.ApiBaseUrl.ValueString()
+		apiKey = os.Getenv("KEVEL_API_KEY")
+	}
+
+	if apiKey == "" {
+		resp.Diagnostics.AddError("Error configuring client", "No API key provided")
+		return
+	}
+
+	apiKeySecurityProvider, err := securityprovider.NewSecurityProviderApiKey("header", "X-Adzerk-ApiKey", apiKey)
+	if err != nil {
+		resp.Diagnostics.AddError("Error configuring client", err.Error())
+		return
 	}
 
 	client, err := adzerkManagementSdk.NewClientWithResponses(apiBaseUrl, adzerkManagementSdk.WithRequestEditorFn(apiKeySecurityProvider.Intercept))

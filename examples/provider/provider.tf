@@ -1,3 +1,3 @@
 provider "kevel" {
-  # example configuration here
+  api_key = "aaaaaaaa"
 }
