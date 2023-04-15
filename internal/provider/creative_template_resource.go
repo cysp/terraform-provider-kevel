@@ -38,10 +38,12 @@ type CreativeTemplateResourceModel struct {
 	Contents    types.List   `json:"Contents,omitempty"`
 	Fields      types.List   `json:"Fields,omitempty"`
 }
+
 type CreativeTemplateResourceModelContents struct {
 	Type types.String `tfsdk:"type"`
 	Body types.String `tfsdk:"body"`
 }
+
 type CreativeTemplateResourceModelField struct {
 	Type        types.String `tfsdk:"type"`
 	Name        types.String `tfsdk:"name"`
@@ -56,8 +58,6 @@ func (m *CreativeTemplateResourceModel) createRequestBody() map[string]interface
 	body := make(map[string]interface{}, 4)
 	AddInt64ValueToMap(&body, "Id", m.Id)
 	AddStringValueToMap(&body, "Name", m.Name)
-	// body["Width"] = CreativeTemplate.Width.ValueInt64()
-	// body["Height"] = CreativeTemplate.Height.ValueInt64()
 	return body
 }
 
@@ -76,14 +76,6 @@ func setStateWithCreativeTemplate(s *tfsdk.State, ctx context.Context, creativeT
 	diags.Append(s.SetAttribute(ctx, path.Root("name"), types.StringValue(creativeTemplate.Name))...)
 
 	diags.Append(s.SetAttribute(ctx, path.Root("description"), types.StringValue(creativeTemplate.Description))...)
-
-	// if CreativeTemplate.Width != nil {
-	// 	diags.Append(s.SetAttribute(ctx, path.Root("width"), NewInt64PointerValueFromInt32(CreativeTemplate.Width))...)
-	// }
-
-	// if CreativeTemplate.Height != nil {
-	// 	diags.Append(s.SetAttribute(ctx, path.Root("height"), NewInt64PointerValueFromInt32(CreativeTemplate.Height))...)
-	// }
 
 	return diags
 }
@@ -111,22 +103,6 @@ func (r *CreativeTemplateResource) Schema(_ context.Context, _ resource.SchemaRe
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 					stringplanmodifier.RequiresReplace(),
-				},
-			},
-			"width": schema.Int64Attribute{
-				Description: "Width of the creative template",
-				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-					int64planmodifier.RequiresReplace(),
-				},
-			},
-			"height": schema.Int64Attribute{
-				Description: "Height of the creative template",
-				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-					int64planmodifier.RequiresReplace(),
 				},
 			},
 		},

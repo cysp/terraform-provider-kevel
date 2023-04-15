@@ -39,12 +39,11 @@ type adTypeResourceModel struct {
 	Height types.Int64  `tfsdk:"height"`
 }
 
-func (adType *adTypeResourceModel) createRequestBody() map[string]interface{} {
+func (m *adTypeResourceModel) createRequestBody() map[string]interface{} {
 	body := make(map[string]interface{})
-	AddInt64ValueToMap(&body, "Id", adType.Id)
-	AddStringValueToMap(&body, "Name", adType.Name)
-	AddInt64ValueToMap(&body, "Width", adType.Width)
-	AddInt64ValueToMap(&body, "Height", adType.Height)
+	AddStringValueToMap(&body, "Name", m.Name)
+	AddInt64ValueToMap(&body, "Width", m.Width)
+	AddInt64ValueToMap(&body, "Height", m.Height)
 	return body
 }
 
