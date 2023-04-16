@@ -37,21 +37,16 @@ type siteResourceModel struct {
 	Url   types.String `tfsdk:"url"`
 }
 
-func (m *siteResourceModel) createRequestBody() map[string]interface{} {
+func (m *siteResourceModel) createOrUpdateRequestBody() map[string]interface{} {
 	body := make(map[string]interface{})
+	AddInt64ValueToMap(&body, "Id", m.Id)
 	AddStringValueToMap(&body, "Title", m.Title)
 	AddStringValueToMap(&body, "URL", m.Url)
 	return body
 }
 
-func (m *siteResourceModel) updateRequestBody() map[string]interface{} {
-	body := m.createRequestBody()
-	AddInt64ValueToMap(&body, "Id", m.Id)
-	return body
-}
-
 func (m *siteResourceModel) deleteRequestBody() map[string]interface{} {
-	body := m.updateRequestBody()
+	body := m.createOrUpdateRequestBody()
 	body["IsDeleted"] = true
 	return body
 }
@@ -135,7 +130,7 @@ func (r *siteResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	response, err := r.client.CreateSiteWithResponse(ctx, plan.createRequestBody())
+	response, err := r.client.CreateSiteWithResponse(ctx, plan.createOrUpdateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating site",
@@ -179,7 +174,7 @@ func (r *siteResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.updateRequestBody())
+	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.createOrUpdateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Kevel Site",

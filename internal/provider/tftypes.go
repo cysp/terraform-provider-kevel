@@ -10,18 +10,6 @@ func NewInt64PointerValueFromInt32(value *int32) basetypes.Int64Value {
 	return basetypes.NewInt64Value(int64(*value))
 }
 
-func AddStringValueToMap(m *map[string]interface{}, key string, value basetypes.StringValue) {
-	if value.IsUnknown() {
-		return
-	}
-
-	if value.IsNull() {
-		(*m)[key] = nil
-	} else {
-		(*m)[key] = value.ValueString()
-	}
-}
-
 func AddInt64ValueToMap(m *map[string]interface{}, key string, value basetypes.Int64Value) {
 	if value.IsUnknown() {
 		return
@@ -31,5 +19,17 @@ func AddInt64ValueToMap(m *map[string]interface{}, key string, value basetypes.I
 		(*m)[key] = nil
 	} else {
 		(*m)[key] = value.ValueInt64()
+	}
+}
+
+func AddStringValueToMap(m *map[string]interface{}, key string, value basetypes.StringValue) {
+	if value.IsUnknown() {
+		return
+	}
+
+	if value.IsNull() {
+		(*m)[key] = nil
+	} else {
+		(*m)[key] = value.ValueString()
 	}
 }
