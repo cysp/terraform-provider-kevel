@@ -5,15 +5,11 @@ import (
 	"regexp"
 	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64default"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -30,41 +26,6 @@ func NewChannelSiteMapResource() resource.Resource {
 
 type channelSiteMapResource struct {
 	client *kevelManagementClient.ClientWithResponses
-}
-
-type channelSiteMapResourceModel struct {
-	ChannelId types.Int64 `tfsdk:"channel_id"`
-	SiteId    types.Int64 `tfsdk:"site_id"`
-	Priority  types.Int64 `tfsdk:"priority"`
-}
-
-func (m *channelSiteMapResourceModel) createRequestBody() map[string]interface{} {
-	body := make(map[string]interface{}, 3)
-	AddInt64ValueToMap(&body, "ChannelId", m.ChannelId)
-	AddInt64ValueToMap(&body, "SiteId", m.SiteId)
-	AddInt64ValueToMap(&body, "Priority", m.Priority)
-	return body
-}
-
-func setStateWithChannelSiteMap(s *tfsdk.State, ctx context.Context, channelSiteMap *kevelManagementClient.ChannelSiteMap) diag.Diagnostics {
-	diags := diag.Diagnostics{}
-
-	if channelSiteMap == nil {
-		diags.AddError("Error", "channel site map is nil")
-		return diags
-	}
-
-	if channelSiteMap.ChannelId != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("channel_id"), NewInt64ValueFromInt32Pointer(channelSiteMap.ChannelId))...)
-	}
-	if channelSiteMap.SiteId != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("site_id"), NewInt64ValueFromInt32Pointer(channelSiteMap.SiteId))...)
-	}
-	if channelSiteMap.Priority != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("priority"), NewInt64ValueFromInt32Pointer(channelSiteMap.Priority))...)
-	}
-
-	return diags
 }
 
 func (r *channelSiteMapResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -92,10 +53,6 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 			"priority": schema.Int64Attribute{
 				Description: "Priority of the channel site map",
 				Required:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-				},
-				Default: int64default.StaticInt64(10),
 			},
 		},
 	}
@@ -132,9 +89,7 @@ func (r *channelSiteMapResource) Create(ctx context.Context, req resource.Create
 		return
 	}
 
-	channelSiteMap := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, channelSiteMap)...)
+	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelSiteMapResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -154,9 +109,7 @@ func (r *channelSiteMapResource) Read(ctx context.Context, req resource.ReadRequ
 		return
 	}
 
-	channelSiteMap := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, channelSiteMap)...)
+	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelSiteMapResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -176,9 +129,7 @@ func (r *channelSiteMapResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	channelSiteMap := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, channelSiteMap)...)
+	resp.Diagnostics.Append(setStateWithChannelSiteMap(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelSiteMapResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

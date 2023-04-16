@@ -18,10 +18,7 @@ Kevel Channel Site Map
 ### Required
 
 - `channel_id` (Number) Numeric identifier of the channel
-- `site_id` (Number) Numeric identifier of the site
-
-### Optional
-
 - `priority` (Number) Priority of the channel site map
+- `site_id` (Number) Numeric identifier of the site
 
 

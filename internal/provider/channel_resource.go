@@ -5,18 +5,11 @@ import (
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/attr"
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -35,54 +28,6 @@ type channelResource struct {
 	client *kevelManagementClient.ClientWithResponses
 }
 
-type channelResourceModel struct {
-	Id      types.Int64   `tfsdk:"id"`
-	Title   types.String  `tfsdk:"title"`
-	AdTypes []types.Int64 `tfsdk:"ad_types"`
-}
-
-func (m *channelResourceModel) createOrUpdateRequestBody() map[string]interface{} {
-	bodyAdTypes := make([]int32, len(m.AdTypes))
-	for itemIndex, item := range m.AdTypes {
-		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
-	}
-
-	body := make(map[string]interface{})
-	AddInt64ValueToMap(&body, "Id", m.Id)
-	AddStringValueToMap(&body, "Title", m.Title)
-	body["AdTypes"] = bodyAdTypes
-	body["Engine"] = 0
-	return body
-}
-
-func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *kevelManagementClient.Channel) diag.Diagnostics {
-	diags := diag.Diagnostics{}
-
-	if channel == nil {
-		diags.AddError("Error", "channel is nil")
-		return diags
-	}
-
-	if channel.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(channel.Id))...)
-	}
-
-	if channel.Title != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("title"), types.StringPointerValue(channel.Title))...)
-	}
-
-	if channel.AdTypes != nil {
-		stateAdTypes := make([]basetypes.Int64Value, len(*channel.AdTypes))
-		for itemIndex, item := range *channel.AdTypes {
-			stateAdTypes[itemIndex] = types.Int64Value(int64(item))
-		}
-
-		diags.Append(s.SetAttribute(ctx, path.Root("ad_types"), stateAdTypes)...)
-	}
-
-	return diags
-}
-
 func (r *channelResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
 	resp.TypeName = req.ProviderTypeName + "_channel"
 }
@@ -94,16 +39,10 @@ func (r *channelResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"id": schema.Int64Attribute{
 				Description: "Numeric identifier of the channel",
 				Computed:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-				},
 			},
 			"title": schema.StringAttribute{
 				Description: "Title of the channel",
 				Required:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.UseStateForUnknown(),
-				},
 			},
 			"ad_types": schema.ListAttribute{
 				Description: "List of ad types",
@@ -111,9 +50,6 @@ func (r *channelResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 				Optional:    true,
 				Computed:    true,
 				Default:     listdefault.StaticValue(types.ListValueMust(types.Int64Type, []attr.Value{})),
-				PlanModifiers: []planmodifier.List{
-					listplanmodifier.UseStateForUnknown(),
-				},
 			},
 		},
 	}
@@ -150,9 +86,7 @@ func (r *channelResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	channel := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, channel)...)
+	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -172,9 +106,7 @@ func (r *channelResource) Read(ctx context.Context, req resource.ReadRequest, re
 		return
 	}
 
-	channel := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, channel)...)
+	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
@@ -194,9 +126,7 @@ func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	channel := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, channel)...)
+	resp.Diagnostics.Append(setStateWithChannel(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *channelResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {

@@ -5,15 +5,12 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -30,48 +27,6 @@ func NewAdTypeResource() resource.Resource {
 
 type adTypeResource struct {
 	client *kevelManagementClient.ClientWithResponses
-}
-
-type adTypeResourceModel struct {
-	Id     types.Int64  `tfsdk:"id"`
-	Name   types.String `tfsdk:"name"`
-	Width  types.Int64  `tfsdk:"width"`
-	Height types.Int64  `tfsdk:"height"`
-}
-
-func (m *adTypeResourceModel) createRequestBody() map[string]interface{} {
-	body := make(map[string]interface{})
-	AddStringValueToMap(&body, "Name", m.Name)
-	AddInt64ValueToMap(&body, "Width", m.Width)
-	AddInt64ValueToMap(&body, "Height", m.Height)
-	return body
-}
-
-func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManagementClient.AdType) diag.Diagnostics {
-	diags := diag.Diagnostics{}
-
-	if adType == nil {
-		diags.AddError("Error", "ad type is nil")
-		return diags
-	}
-
-	if adType.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(adType.Id))...)
-	}
-
-	if adType.Name != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("name"), types.StringPointerValue(adType.Name))...)
-	}
-
-	if adType.Width != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("width"), NewInt64ValueFromInt32Pointer(adType.Width))...)
-	}
-
-	if adType.Height != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("height"), NewInt64ValueFromInt32Pointer(adType.Height))...)
-	}
-
-	return diags
 }
 
 func (r *adTypeResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -144,9 +99,7 @@ func (r *adTypeResource) Create(ctx context.Context, req resource.CreateRequest,
 		return
 	}
 
-	adType := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithAdType(&resp.State, ctx, adType)...)
+	resp.Diagnostics.Append(setStateWithAdType(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *adTypeResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
@@ -202,9 +155,7 @@ func (r *adTypeResource) Update(ctx context.Context, req resource.UpdateRequest,
 		return
 	}
 
-	adType := response.JSON200
-
-	resp.Diagnostics.Append(setStateWithAdType(&resp.State, ctx, adType)...)
+	resp.Diagnostics.Append(setStateWithAdType(&resp.State, ctx, response.JSON200)...)
 }
 
 func (r *adTypeResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
