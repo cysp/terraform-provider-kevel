@@ -56,7 +56,7 @@ func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManage
 	}
 
 	if adType.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64PointerValueFromInt32(adType.Id))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(adType.Id))...)
 	}
 
 	if adType.Name != nil {
@@ -64,11 +64,11 @@ func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManage
 	}
 
 	if adType.Width != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("width"), NewInt64PointerValueFromInt32(adType.Width))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("width"), NewInt64ValueFromInt32Pointer(adType.Width))...)
 	}
 
 	if adType.Height != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("height"), NewInt64PointerValueFromInt32(adType.Height))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("height"), NewInt64ValueFromInt32Pointer(adType.Height))...)
 	}
 
 	return diags

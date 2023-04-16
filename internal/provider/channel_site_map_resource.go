@@ -55,13 +55,13 @@ func setStateWithChannelSiteMap(s *tfsdk.State, ctx context.Context, channelSite
 	}
 
 	if channelSiteMap.ChannelId != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("channel_id"), NewInt64PointerValueFromInt32(channelSiteMap.ChannelId))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("channel_id"), NewInt64ValueFromInt32Pointer(channelSiteMap.ChannelId))...)
 	}
 	if channelSiteMap.SiteId != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("site_id"), NewInt64PointerValueFromInt32(channelSiteMap.SiteId))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("site_id"), NewInt64ValueFromInt32Pointer(channelSiteMap.SiteId))...)
 	}
 	if channelSiteMap.Priority != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("priority"), NewInt64PointerValueFromInt32(channelSiteMap.Priority))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("priority"), NewInt64ValueFromInt32Pointer(channelSiteMap.Priority))...)
 	}
 
 	return diags

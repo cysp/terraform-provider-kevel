@@ -70,7 +70,7 @@ func setStateWithCreativeTemplate(s *tfsdk.State, ctx context.Context, creativeT
 	}
 
 	if creativeTemplate.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64PointerValueFromInt32(creativeTemplate.Id))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(creativeTemplate.Id))...)
 	}
 
 	diags.Append(s.SetAttribute(ctx, path.Root("name"), types.StringValue(creativeTemplate.Name))...)

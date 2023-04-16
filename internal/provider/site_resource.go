@@ -60,7 +60,7 @@ func setStateWithSite(s *tfsdk.State, ctx context.Context, site *kevelManagement
 	}
 
 	if site.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64PointerValueFromInt32(site.Id))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(site.Id))...)
 	}
 
 	if site.Title != nil {

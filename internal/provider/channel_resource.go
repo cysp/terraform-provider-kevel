@@ -64,7 +64,7 @@ func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *kevelMana
 	}
 
 	if channel.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64PointerValueFromInt32(channel.Id))...)
+		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(channel.Id))...)
 	}
 
 	if channel.Title != nil {
