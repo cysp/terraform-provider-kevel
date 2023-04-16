@@ -1,14 +1,7 @@
 package provider
 
 import (
-	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
-)
-
-var (
-	_ resource.Resource                = &adTypeResource{}
-	_ resource.ResourceWithConfigure   = &adTypeResource{}
-	_ resource.ResourceWithImportState = &adTypeResource{}
 )
 
 type adTypeResourceModel struct {

@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -19,21 +18,10 @@ func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManage
 		return diags
 	}
 
-	if adType.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(adType.Id))...)
-	}
-
-	if adType.Name != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("name"), types.StringPointerValue(adType.Name))...)
-	}
-
-	if adType.Width != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("width"), NewInt64ValueFromInt32Pointer(adType.Width))...)
-	}
-
-	if adType.Height != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("height"), NewInt64ValueFromInt32Pointer(adType.Height))...)
-	}
+	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("id"), adType.Id, &diags)
+	SetStringStateAttribute(s, ctx, path.Root("name"), adType.Name, &diags)
+	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("width"), adType.Width, &diags)
+	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("height"), adType.Height, &diags)
 
 	return diags
 }

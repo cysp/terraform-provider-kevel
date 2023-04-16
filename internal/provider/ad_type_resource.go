@@ -38,9 +38,8 @@ func (r *adTypeResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 		Description: "Kevel AdType",
 		Attributes: map[string]schema.Attribute{
 			"id": schema.Int64Attribute{
-				Description:   "Numeric identifier of the ad type",
-				Computed:      true,
-				PlanModifiers: []planmodifier.Int64{},
+				Description: "Numeric identifier of the ad type",
+				Computed:    true,
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the ad type",

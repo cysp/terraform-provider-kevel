@@ -58,7 +58,6 @@ func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	var data KevelProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
-
 	if resp.Diagnostics.HasError() {
 		return
 	}

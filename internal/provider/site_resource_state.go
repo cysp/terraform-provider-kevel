@@ -6,7 +6,6 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -19,18 +18,9 @@ func setStateWithSite(s *tfsdk.State, ctx context.Context, site *kevelManagement
 		return diags
 	}
 
-	if site.Id != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("id"), NewInt64ValueFromInt32Pointer(site.Id))...)
-	}
-
-	if site.Title != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("title"), types.StringPointerValue(site.Title))...)
-	}
-
-	if site.Url != nil {
-		diags.Append(s.SetAttribute(ctx, path.Root("url"), types.StringPointerValue(site.Url))...)
-
-	}
+	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("id"), site.Id, &diags)
+	SetStringStateAttribute(s, ctx, path.Root("title"), site.Title, &diags)
+	SetStringStateAttribute(s, ctx, path.Root("url"), site.Url, &diags)
 
 	return diags
 }

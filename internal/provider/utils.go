@@ -1,6 +1,14 @@
 package provider
 
-import "github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+import (
+	"context"
+
+	"github.com/hashicorp/terraform-plugin-framework/diag"
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
+	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
+)
 
 func NewInt64ValueFromInt32Pointer(value *int32) basetypes.Int64Value {
 	if value == nil {
@@ -32,4 +40,12 @@ func AddStringValueToMap(m *map[string]interface{}, key string, value basetypes.
 	} else {
 		(*m)[key] = value.ValueString()
 	}
+}
+
+func SetInt64StateAttributeFromInt32Pointer(s *tfsdk.State, ctx context.Context, path path.Path, value *int32, diags *diag.Diagnostics) {
+	diags.Append(s.SetAttribute(ctx, path, NewInt64ValueFromInt32Pointer(value))...)
+}
+
+func SetStringStateAttribute(s *tfsdk.State, ctx context.Context, path path.Path, value *string, diags *diag.Diagnostics) {
+	diags.Append(s.SetAttribute(ctx, path, types.StringPointerValue(value))...)
 }
