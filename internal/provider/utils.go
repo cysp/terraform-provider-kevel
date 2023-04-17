@@ -2,9 +2,11 @@ package provider
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
@@ -48,4 +50,17 @@ func SetInt64StateAttributeFromInt32Pointer(s *tfsdk.State, ctx context.Context,
 
 func SetStringStateAttribute(s *tfsdk.State, ctx context.Context, path path.Path, value *string, diags *diag.Diagnostics) {
 	diags.Append(s.SetAttribute(ctx, path, types.StringPointerValue(value))...)
+}
+
+func ImportStatePassthroughInt64ID(ctx context.Context, attrPath path.Path, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
+	id, err := strconv.ParseInt(req.ID, 10, 64)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Resource Import Passthrough Invalid ID",
+			"Could not parse ID \""+req.ID+"\" as integer: "+err.Error(),
+		)
+		return
+	}
+
+	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, attrPath, id)...)
 }

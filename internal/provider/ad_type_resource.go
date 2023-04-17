@@ -67,14 +67,14 @@ func (r *adTypeResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 	}
 }
 
-func (r *adTypeResource) Configure(_ context.Context, req resource.ConfigureRequest, res *resource.ConfigureResponse) {
+func (r *adTypeResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
 	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
 	if !ok {
-		res.Diagnostics.AddError("Error", "Could not get client from provider data")
+		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return
 	}
 
@@ -184,14 +184,5 @@ func (r *adTypeResource) Delete(ctx context.Context, req resource.DeleteRequest,
 }
 
 func (r *adTypeResource) ImportState(ctx context.Context, req resource.ImportStateRequest, resp *resource.ImportStateResponse) {
-	id, err := strconv.ParseUint(req.ID, 10, 64)
-	if err != nil {
-		resp.Diagnostics.AddError(
-			"Error importing Kevel AdType",
-			"Could not import ad type ID "+req.ID+", unexpected error: "+err.Error(),
-		)
-		return
-	}
-
-	resp.Diagnostics.Append(resp.State.SetAttribute(ctx, path.Root("id"), id)...)
+	ImportStatePassthroughInt64ID(ctx, path.Root("id"), req, resp)
 }

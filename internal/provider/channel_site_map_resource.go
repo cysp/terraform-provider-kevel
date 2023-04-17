@@ -58,14 +58,14 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 	}
 }
 
-func (r *channelSiteMapResource) Configure(_ context.Context, req resource.ConfigureRequest, res *resource.ConfigureResponse) {
+func (r *channelSiteMapResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
 
 	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
 	if !ok {
-		res.Diagnostics.AddError("Error", "Could not get client from provider data")
+		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return
 	}
 
@@ -170,7 +170,7 @@ func (r *channelSiteMapResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 
-	channelId, err := strconv.ParseUint(matches[1], 10, 64)
+	channelId, err := strconv.ParseInt(matches[1], 10, 64)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error importing Kevel Channel Site Map",
@@ -179,7 +179,7 @@ func (r *channelSiteMapResource) ImportState(ctx context.Context, req resource.I
 		return
 	}
 
-	siteId, err := strconv.ParseUint(matches[2], 10, 64)
+	siteId, err := strconv.ParseInt(matches[2], 10, 64)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error importing Kevel Channel Site Map",
