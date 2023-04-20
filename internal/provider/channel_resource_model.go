@@ -2,6 +2,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type channelResourceModel struct {
@@ -10,16 +12,28 @@ type channelResourceModel struct {
 	AdTypes []types.Int64 `tfsdk:"ad_types"`
 }
 
-func (m *channelResourceModel) createOrUpdateRequestBody() map[string]interface{} {
+func (m *channelResourceModel) createRequestBody() kevelManagementClient.CreateChannelJSONRequestBody {
 	bodyAdTypes := make([]int32, len(m.AdTypes))
 	for itemIndex, item := range m.AdTypes {
 		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
 	}
 
-	body := make(map[string]interface{})
-	AddInt64ValueToMap(&body, "Id", m.Id)
-	AddStringValueToMap(&body, "Title", m.Title)
-	body["AdTypes"] = bodyAdTypes
-	body["Engine"] = 0
-	return body
+	return kevelManagementClient.CreateChannelJSONRequestBody{
+		Title:   m.Title.ValueString(),
+		AdTypes: bodyAdTypes,
+		Engine:  0,
+	}
+}
+func (m *channelResourceModel) updateRequestBody() kevelManagementClient.UpdateChannelJSONRequestBody {
+	bodyAdTypes := make([]int32, len(m.AdTypes))
+	for itemIndex, item := range m.AdTypes {
+		bodyAdTypes[itemIndex] = int32(item.ValueInt64())
+	}
+
+	return kevelManagementClient.UpdateChannelJSONRequestBody{
+		Id:      int32(m.Id.ValueInt64()),
+		Title:   m.Title.ValueString(),
+		AdTypes: bodyAdTypes,
+		Engine:  0,
+	}
 }

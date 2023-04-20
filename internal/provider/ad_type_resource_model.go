@@ -2,6 +2,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type adTypeResourceModel struct {
@@ -11,10 +13,10 @@ type adTypeResourceModel struct {
 	Height types.Int64  `tfsdk:"height"`
 }
 
-func (m *adTypeResourceModel) createRequestBody() map[string]interface{} {
-	body := make(map[string]interface{})
-	AddStringValueToMap(&body, "Name", m.Name)
-	AddInt64ValueToMap(&body, "Width", m.Width)
-	AddInt64ValueToMap(&body, "Height", m.Height)
-	return body
+func (m *adTypeResourceModel) createRequestBody() kevelManagementClient.CreateAdTypeJSONRequestBody {
+	return kevelManagementClient.CreateAdTypeJSONRequestBody{
+		Width:  int32(m.Width.ValueInt64()),
+		Height: int32(m.Height.ValueInt64()),
+		Name:   m.Name.ValueStringPointer(),
+	}
 }

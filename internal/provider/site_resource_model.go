@@ -2,6 +2,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type siteResourceModel struct {
@@ -10,16 +12,24 @@ type siteResourceModel struct {
 	Url   types.String `tfsdk:"url"`
 }
 
-func (m *siteResourceModel) createOrUpdateRequestBody() map[string]interface{} {
-	body := make(map[string]interface{})
-	AddInt64ValueToMap(&body, "Id", m.Id)
-	AddStringValueToMap(&body, "Title", m.Title)
-	AddStringValueToMap(&body, "URL", m.Url)
-	return body
+func (m *siteResourceModel) createRequestBody() kevelManagementClient.CreateSiteJSONRequestBody {
+	return kevelManagementClient.CreateSiteJSONRequestBody{
+		Title: m.Title.ValueString(),
+		URL:   m.Url.ValueString(),
+	}
+}
+func (m *siteResourceModel) updateRequestBody() kevelManagementClient.UpdateSiteJSONRequestBody {
+	return kevelManagementClient.UpdateSiteJSONRequestBody{
+		Id:    int32(m.Id.ValueInt64()),
+		Title: m.Title.ValueString(),
+		URL:   m.Url.ValueString(),
+	}
+
 }
 
-func (m *siteResourceModel) deleteRequestBody() map[string]interface{} {
-	body := m.createOrUpdateRequestBody()
-	body["IsDeleted"] = true
+func (m *siteResourceModel) deleteRequestBody() kevelManagementClient.UpdateSiteJSONRequestBody {
+	isDeleted := true
+	body := m.updateRequestBody()
+	body.IsDeleted = &isDeleted
 	return body
 }

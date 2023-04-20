@@ -71,7 +71,7 @@ func (r *siteResource) Create(ctx context.Context, req resource.CreateRequest, r
 		return
 	}
 
-	response, err := r.client.CreateSiteWithResponse(ctx, plan.createOrUpdateRequestBody())
+	response, err := r.client.CreateSiteWithResponse(ctx, plan.createRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating site",
@@ -111,7 +111,7 @@ func (r *siteResource) Update(ctx context.Context, req resource.UpdateRequest, r
 		return
 	}
 
-	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.createOrUpdateRequestBody())
+	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.updateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Kevel Site",

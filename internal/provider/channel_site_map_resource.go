@@ -120,7 +120,7 @@ func (r *channelSiteMapResource) Update(ctx context.Context, req resource.Update
 		return
 	}
 
-	response, err := r.client.UpdateChannelSiteMapWithResponse(ctx, plan.createRequestBody())
+	response, err := r.client.UpdateChannelSiteMapWithResponse(ctx, plan.updateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Updating Kevel Channel Site Map",

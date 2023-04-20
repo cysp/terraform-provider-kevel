@@ -77,7 +77,7 @@ func (r *channelResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	response, err := r.client.CreateChannelWithResponse(ctx, plan.createOrUpdateRequestBody())
+	response, err := r.client.CreateChannelWithResponse(ctx, plan.createRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating channel",
@@ -117,7 +117,7 @@ func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	response, err := r.client.UpdateChannelWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.createOrUpdateRequestBody())
+	response, err := r.client.UpdateChannelWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.updateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Kevel Channel",

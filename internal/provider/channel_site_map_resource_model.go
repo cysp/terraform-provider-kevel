@@ -2,6 +2,8 @@ package provider
 
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
+
+	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type channelSiteMapResourceModel struct {
@@ -10,10 +12,20 @@ type channelSiteMapResourceModel struct {
 	Priority  types.Int64 `tfsdk:"priority"`
 }
 
-func (m *channelSiteMapResourceModel) createRequestBody() map[string]interface{} {
-	body := make(map[string]interface{}, 3)
-	AddInt64ValueToMap(&body, "ChannelId", m.ChannelId)
-	AddInt64ValueToMap(&body, "SiteId", m.SiteId)
-	AddInt64ValueToMap(&body, "Priority", m.Priority)
-	return body
+func (m *channelSiteMapResourceModel) createRequestBody() kevelManagementClient.CreateChannelSiteMapJSONRequestBody {
+	priority := int32(m.Priority.ValueInt64())
+
+	return kevelManagementClient.CreateChannelSiteMapJSONRequestBody{
+		ChannelId: int32(m.ChannelId.ValueInt64()),
+		SiteId:    int32(m.SiteId.ValueInt64()),
+		Priority:  &priority,
+	}
+}
+
+func (m *channelSiteMapResourceModel) updateRequestBody() kevelManagementClient.UpdateChannelSiteMapJSONRequestBody {
+	return kevelManagementClient.UpdateChannelSiteMapJSONRequestBody{
+		ChannelId: int32(m.ChannelId.ValueInt64()),
+		SiteId:    int32(m.SiteId.ValueInt64()),
+		Priority:  int32(m.Priority.ValueInt64()),
+	}
 }
