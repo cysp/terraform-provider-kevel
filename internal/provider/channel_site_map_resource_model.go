@@ -13,12 +13,10 @@ type channelSiteMapResourceModel struct {
 }
 
 func (m *channelSiteMapResourceModel) createRequestBody() kevelManagementClient.CreateChannelSiteMapJSONRequestBody {
-	priority := int32(m.Priority.ValueInt64())
-
 	return kevelManagementClient.CreateChannelSiteMapJSONRequestBody{
 		ChannelId: int32(m.ChannelId.ValueInt64()),
 		SiteId:    int32(m.SiteId.ValueInt64()),
-		Priority:  &priority,
+		Priority:  int32(m.Priority.ValueInt64()),
 	}
 }
 

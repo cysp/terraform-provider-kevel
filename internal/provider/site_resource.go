@@ -7,6 +7,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
 )
@@ -36,6 +38,9 @@ func (r *siteResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 			"id": schema.Int64Attribute{
 				Description: "Numeric identifier of the site",
 				Computed:    true,
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"title": schema.StringAttribute{
 				Description: "Title of the site",

@@ -18,7 +18,7 @@ func setStateWithSite(s *tfsdk.State, ctx context.Context, site *kevelManagement
 		return diags
 	}
 
-	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("id"), site.Id, &diags)
+	SetInt64StateAttributeFromInt32(s, ctx, path.Root("id"), site.Id, &diags)
 	SetStringStateAttribute(s, ctx, path.Root("title"), site.Title, &diags)
 	SetStringStateAttribute(s, ctx, path.Root("url"), site.Url, &diags)
 

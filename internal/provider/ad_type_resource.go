@@ -40,6 +40,9 @@ func (r *adTypeResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 			"id": schema.Int64Attribute{
 				Description: "Numeric identifier of the ad type",
 				Computed:    true,
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"name": schema.StringAttribute{
 				Description: "Name of the ad type",
@@ -120,8 +123,8 @@ func (r *adTypeResource) Read(ctx context.Context, req resource.ReadRequest, res
 
 	adTypeList := response.JSON200
 
-	adTypeIndex, adTypeFound := sort.Find(len(*adTypeList.Items), func(i int) int {
-		return int(int32(state.Id.ValueInt64()) - *(*adTypeList.Items)[i].Id)
+	adTypeIndex, adTypeFound := sort.Find(len(adTypeList.Items), func(i int) int {
+		return int(int32(state.Id.ValueInt64()) - (adTypeList.Items)[i].Id)
 	})
 
 	if !adTypeFound {
@@ -132,7 +135,7 @@ func (r *adTypeResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	adType := (*adTypeList.Items)[adTypeIndex]
+	adType := (adTypeList.Items)[adTypeIndex]
 
 	resp.Diagnostics.Append(setStateWithAdType(&resp.State, ctx, &adType)...)
 }

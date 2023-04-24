@@ -44,11 +44,18 @@ func AddStringValueToMap(m *map[string]interface{}, key string, value basetypes.
 	}
 }
 
+func SetInt64StateAttributeFromInt32(s *tfsdk.State, ctx context.Context, path path.Path, value int32, diags *diag.Diagnostics) {
+	diags.Append(s.SetAttribute(ctx, path, int64(value))...)
+}
+
 func SetInt64StateAttributeFromInt32Pointer(s *tfsdk.State, ctx context.Context, path path.Path, value *int32, diags *diag.Diagnostics) {
 	diags.Append(s.SetAttribute(ctx, path, NewInt64ValueFromInt32Pointer(value))...)
 }
 
-func SetStringStateAttribute(s *tfsdk.State, ctx context.Context, path path.Path, value *string, diags *diag.Diagnostics) {
+func SetStringStateAttribute(s *tfsdk.State, ctx context.Context, path path.Path, value string, diags *diag.Diagnostics) {
+	diags.Append(s.SetAttribute(ctx, path, (value))...)
+}
+func SetStringStateAttributeFromPointer(s *tfsdk.State, ctx context.Context, path path.Path, value *string, diags *diag.Diagnostics) {
 	diags.Append(s.SetAttribute(ctx, path, types.StringPointerValue(value))...)
 }
 

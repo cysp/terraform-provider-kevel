@@ -20,12 +20,12 @@ func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *kevelMana
 		return diags
 	}
 
-	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("id"), channel.Id, &diags)
+	SetInt64StateAttributeFromInt32(s, ctx, path.Root("id"), channel.Id, &diags)
 	SetStringStateAttribute(s, ctx, path.Root("title"), channel.Title, &diags)
 
 	if channel.AdTypes != nil {
-		stateAdTypes := make([]basetypes.Int64Value, len(*channel.AdTypes))
-		for itemIndex, item := range *channel.AdTypes {
+		stateAdTypes := make([]basetypes.Int64Value, len(channel.AdTypes))
+		for itemIndex, item := range channel.AdTypes {
 			stateAdTypes[itemIndex] = types.Int64Value(int64(item))
 		}
 

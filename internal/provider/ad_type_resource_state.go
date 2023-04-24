@@ -18,10 +18,10 @@ func setStateWithAdType(s *tfsdk.State, ctx context.Context, adType *kevelManage
 		return diags
 	}
 
-	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("id"), adType.Id, &diags)
-	SetStringStateAttribute(s, ctx, path.Root("name"), adType.Name, &diags)
-	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("width"), adType.Width, &diags)
-	SetInt64StateAttributeFromInt32Pointer(s, ctx, path.Root("height"), adType.Height, &diags)
+	SetInt64StateAttributeFromInt32(s, ctx, path.Root("id"), adType.Id, &diags)
+	SetStringStateAttributeFromPointer(s, ctx, path.Root("name"), adType.Name, &diags)
+	SetInt64StateAttributeFromInt32(s, ctx, path.Root("width"), adType.Width, &diags)
+	SetInt64StateAttributeFromInt32(s, ctx, path.Root("height"), adType.Height, &diags)
 
 	return diags
 }

@@ -8,7 +8,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listdefault"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/listplanmodifier"
+	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
@@ -39,6 +42,9 @@ func (r *channelResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 			"id": schema.Int64Attribute{
 				Description: "Numeric identifier of the channel",
 				Computed:    true,
+				PlanModifiers: []planmodifier.Int64{
+					int64planmodifier.UseStateForUnknown(),
+				},
 			},
 			"title": schema.StringAttribute{
 				Description: "Title of the channel",
@@ -49,7 +55,10 @@ func (r *channelResource) Schema(_ context.Context, _ resource.SchemaRequest, re
 				ElementType: types.Int64Type,
 				Optional:    true,
 				Computed:    true,
-				Default:     listdefault.StaticValue(types.ListValueMust(types.Int64Type, []attr.Value{})),
+				PlanModifiers: []planmodifier.List{
+					listplanmodifier.UseStateForUnknown(),
+				},
+				Default: listdefault.StaticValue(types.ListValueMust(types.Int64Type, []attr.Value{})),
 			},
 		},
 	}
@@ -77,7 +86,12 @@ func (r *channelResource) Create(ctx context.Context, req resource.CreateRequest
 		return
 	}
 
-	response, err := r.client.CreateChannelWithResponse(ctx, plan.createRequestBody())
+	requestBody := plan.createRequestBody(ctx, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	response, err := r.client.CreateChannelWithResponse(ctx, requestBody)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating channel",
@@ -117,7 +131,12 @@ func (r *channelResource) Update(ctx context.Context, req resource.UpdateRequest
 		return
 	}
 
-	response, err := r.client.UpdateChannelWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.updateRequestBody())
+	requestBody := plan.updateRequestBody(ctx, &resp.Diagnostics)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	response, err := r.client.UpdateChannelWithResponse(ctx, int32(plan.Id.ValueInt64()), requestBody)
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Kevel Channel",
