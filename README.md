@@ -1,7 +1,5 @@
 # Kevel Terraform Provider
 
-Once you've written your provider, you'll want to [publish it on the Terraform Registry](https://www.terraform.io/docs/registry/providers/publishing.html) so that others can use it.
-
 ## Building The Provider
 
 1. Clone the repository
@@ -11,10 +9,6 @@ Once you've written your provider, you'll want to [publish it on the Terraform R
 ```shell
 go install
 ```
-
-## Using the provider
-
-Fill this in for each provider
 
 ## Developing the Provider
 
