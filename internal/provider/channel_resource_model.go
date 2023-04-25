@@ -52,7 +52,7 @@ func makeRequestBodyAdTypes(ctx context.Context, model types.List) (*[]int32, di
 	}
 
 	bodyAdTypes := make([]int32, len(adTypesElements))
-	for adType, i := range adTypesElements {
+	for i, adType := range adTypesElements {
 		bodyAdTypes[i] = int32(adType)
 	}
 
