@@ -9,10 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
-func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *kevelManagementClient.Channel) diag.Diagnostics {
+func setStateWithChannel(s *tfsdk.State, ctx context.Context, channel *adzerk.Channel) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	if channel == nil {

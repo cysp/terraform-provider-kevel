@@ -5,12 +5,14 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/cysp/terraform-provider-kevel/internal/testhelpers"
 	"github.com/hashicorp/terraform-plugin-testing/helper/resource"
+
+	"github.com/cysp/adzerk-management-sdk-go/testserver"
 )
 
 func TestChannelResource(t *testing.T) {
-	s := testhelpers.NewHttpTestServer()
+	s := testserver.NewHttpTestServer()
+	defer s.Close()
 
 	resource.UnitTest(t, resource.TestCase{
 		PreCheck:                 func() { testPreCheck(t) },
@@ -18,10 +20,14 @@ func TestChannelResource(t *testing.T) {
 		Steps: []resource.TestStep{
 			// Create and Read testing
 			{
-				Config: testCombinedConfig(testProviderConfig(s.URL), testChannelResourceConfig("one", nil)),
+				Config: testCombinedConfig(
+					testProviderConfig(s.URL),
+					testChannelResourceConfig("one", nil),
+				),
 				Check: resource.ComposeAggregateTestCheckFunc(
 					resource.TestCheckResourceAttrSet("kevel_channel.test", "id"),
 					resource.TestCheckResourceAttr("kevel_channel.test", "title", "one"),
+					resource.TestCheckResourceAttrSet("kevel_channel.test", "ad_types.#"),
 					resource.TestCheckResourceAttr("kevel_channel.test", "ad_types.#", "0"),
 				),
 			},
@@ -33,16 +39,28 @@ func TestChannelResource(t *testing.T) {
 			},
 			// Update and Read testing
 			{
-				Config: testCombinedConfig(testProviderConfig(s.URL), testChannelResourceConfig("two", []int32{})),
+				Config: testCombinedConfig(
+					testProviderConfig(s.URL),
+					testChannelResourceConfig("two", []int32{}),
+				),
 			},
 			{
-				Config: testCombinedConfig(testProviderConfig(s.URL), testChannelResourceConfig("three", []int32{123, 234})),
+				Config: testCombinedConfig(
+					testProviderConfig(s.URL),
+					testChannelResourceConfig("three", []int32{123, 234}),
+				),
 			},
 			{
-				Config: testCombinedConfig(testProviderConfig(s.URL), testChannelResourceConfig("four", []int32{234})),
+				Config: testCombinedConfig(
+					testProviderConfig(s.URL),
+					testChannelResourceConfig("four", []int32{234}),
+				),
 			},
 			{
-				Config: testCombinedConfig(testProviderConfig(s.URL), testChannelResourceConfig("five", []int32{})),
+				Config: testCombinedConfig(
+					testProviderConfig(s.URL),
+					testChannelResourceConfig("five", []int32{}),
+				),
 			},
 			// Delete testing automatically occurs in TestCase
 		},

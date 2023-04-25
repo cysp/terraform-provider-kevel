@@ -10,7 +10,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 var (
@@ -24,7 +24,7 @@ func NewSiteResource() resource.Resource {
 }
 
 type siteResource struct {
-	client *kevelManagementClient.ClientWithResponses
+	client *adzerk.ClientWithResponses
 }
 
 func (r *siteResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -59,7 +59,7 @@ func (r *siteResource) Configure(_ context.Context, req resource.ConfigureReques
 		return
 	}
 
-	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*adzerk.ClientWithResponses)
 	if !ok {
 		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return

@@ -10,9 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/stringplanmodifier"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 var (
@@ -26,7 +25,7 @@ func NewAdTypeResource() resource.Resource {
 }
 
 type adTypeResource struct {
-	client *kevelManagementClient.ClientWithResponses
+	client *adzerk.ClientWithResponses
 }
 
 func (r *adTypeResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -48,9 +47,6 @@ func (r *adTypeResource) Schema(_ context.Context, _ resource.SchemaRequest, res
 				Description: "Name of the ad type",
 				Optional:    true,
 				Computed:    true,
-				PlanModifiers: []planmodifier.String{
-					stringplanmodifier.RequiresReplace(),
-				},
 			},
 			"width": schema.Int64Attribute{
 				Description: "Width of the ad type",
@@ -75,7 +71,7 @@ func (r *adTypeResource) Configure(_ context.Context, req resource.ConfigureRequ
 		return
 	}
 
-	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*adzerk.ClientWithResponses)
 	if !ok {
 		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return
@@ -112,7 +108,7 @@ func (r *adTypeResource) Read(ctx context.Context, req resource.ReadRequest, res
 		return
 	}
 
-	response, err := r.client.ListAdTypesWithResponse(ctx, &kevelManagementClient.ListAdTypesParams{})
+	response, err := r.client.ListAdTypesWithResponse(ctx, &adzerk.ListAdTypesParams{})
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Reading Kevel AdType",
@@ -122,6 +118,13 @@ func (r *adTypeResource) Read(ctx context.Context, req resource.ReadRequest, res
 	}
 
 	adTypeList := response.JSON200
+	if adTypeList == nil {
+		resp.Diagnostics.AddError(
+			"Error Reading Kevel AdType",
+			"Could not read ad type ID "+state.Id.String()+", unexpected error: ad type list is nil",
+		)
+		return
+	}
 
 	adTypeIndex, adTypeFound := sort.Find(len(adTypeList.Items), func(i int) int {
 		return int(int32(state.Id.ValueInt64()) - (adTypeList.Items)[i].Id)

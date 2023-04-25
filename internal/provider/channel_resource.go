@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 var (
@@ -25,7 +25,7 @@ func NewChannelResource() resource.Resource {
 }
 
 type channelResource struct {
-	client *kevelManagementClient.ClientWithResponses
+	client *adzerk.ClientWithResponses
 }
 
 func (r *channelResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -61,7 +61,7 @@ func (r *channelResource) Configure(_ context.Context, req resource.ConfigureReq
 		return
 	}
 
-	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*adzerk.ClientWithResponses)
 	if !ok {
 		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return

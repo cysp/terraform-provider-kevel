@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
 	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 var (
@@ -25,7 +25,7 @@ func NewChannelSiteMapResource() resource.Resource {
 }
 
 type channelSiteMapResource struct {
-	client *kevelManagementClient.ClientWithResponses
+	client *adzerk.ClientWithResponses
 }
 
 func (r *channelSiteMapResource) Metadata(_ context.Context, req resource.MetadataRequest, resp *resource.MetadataResponse) {
@@ -36,6 +36,10 @@ func (r *channelSiteMapResource) Schema(_ context.Context, _ resource.SchemaRequ
 	resp.Schema = schema.Schema{
 		Description: "Kevel Channel Site Map",
 		Attributes: map[string]schema.Attribute{
+			"id": schema.StringAttribute{
+				Description: "Composite identifier of the channel site map",
+				Computed:    true,
+			},
 			"channel_id": schema.Int64Attribute{
 				Description: "Numeric identifier of the channel",
 				Required:    true,
@@ -63,7 +67,7 @@ func (r *channelSiteMapResource) Configure(_ context.Context, req resource.Confi
 		return
 	}
 
-	client, ok := req.ProviderData.(*kevelManagementClient.ClientWithResponses)
+	client, ok := req.ProviderData.(*adzerk.ClientWithResponses)
 	if !ok {
 		resp.Diagnostics.AddError("Error", "Could not get client from provider data")
 		return

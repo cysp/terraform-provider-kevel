@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type channelResourceModel struct {
@@ -15,22 +15,22 @@ type channelResourceModel struct {
 	AdTypes types.List   `tfsdk:"ad_types"`
 }
 
-func (m *channelResourceModel) createRequestBody(ctx context.Context, diags *diag.Diagnostics) kevelManagementClient.CreateChannelJSONRequestBody {
+func (m *channelResourceModel) createRequestBody(ctx context.Context, diags *diag.Diagnostics) adzerk.CreateChannelJSONRequestBody {
 	bodyAdTypes, bodyAdTypesDiags := makeRequestBodyAdTypes(ctx, m.AdTypes)
 	diags.Append(bodyAdTypesDiags...)
 
-	return kevelManagementClient.CreateChannelJSONRequestBody{
+	return adzerk.CreateChannelJSONRequestBody{
 		Title:   m.Title.ValueString(),
 		AdTypes: bodyAdTypes,
 		Engine:  0,
 	}
 }
 
-func (m *channelResourceModel) updateRequestBody(ctx context.Context, diags *diag.Diagnostics) kevelManagementClient.UpdateChannelJSONRequestBody {
+func (m *channelResourceModel) updateRequestBody(ctx context.Context, diags *diag.Diagnostics) adzerk.UpdateChannelJSONRequestBody {
 	bodyAdTypes, bodyAdTypesDiags := makeRequestBodyAdTypes(ctx, m.AdTypes)
 	diags.Append(bodyAdTypesDiags...)
 
-	return kevelManagementClient.UpdateChannelJSONRequestBody{
+	return adzerk.UpdateChannelJSONRequestBody{
 		Id:      int32(m.Id.ValueInt64()),
 		Title:   m.Title.ValueString(),
 		AdTypes: bodyAdTypes,
@@ -38,11 +38,11 @@ func (m *channelResourceModel) updateRequestBody(ctx context.Context, diags *dia
 	}
 }
 
-func makeRequestBodyAdTypes(ctx context.Context, model types.List) (*[]int32, diag.Diagnostics) {
+func makeRequestBodyAdTypes(ctx context.Context, model types.List) ([]int32, diag.Diagnostics) {
 	diags := diag.Diagnostics{}
 
 	if model.IsNull() || model.IsUnknown() {
-		return nil, diags
+		return []int32{}, diags
 	}
 
 	var adTypesElements = []int64{}
@@ -56,5 +56,5 @@ func makeRequestBodyAdTypes(ctx context.Context, model types.List) (*[]int32, di
 		bodyAdTypes[i] = int32(adType)
 	}
 
-	return &bodyAdTypes, diags
+	return bodyAdTypes, diags
 }

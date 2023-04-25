@@ -7,10 +7,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
-func setStateWithSite(s *tfsdk.State, ctx context.Context, site *kevelManagementClient.Site) diag.Diagnostics {
+func setStateWithSite(s *tfsdk.State, ctx context.Context, site *adzerk.Site) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	if site == nil {

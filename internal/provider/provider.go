@@ -11,7 +11,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	adzerkManagementSdk "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 // Ensure KevelProvider satisfies various provider interfaces.
@@ -42,11 +42,11 @@ func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, 
 	resp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{
 			"api_base_url": schema.StringAttribute{
-				Description: "The base URL of the Kevel API.",
+				Description: "The base URL of the Kevel API. This can also be set via the KEVEL_API_BASE_URL environment variable.",
 				Optional:    true,
 			},
 			"api_key": schema.StringAttribute{
-				Description: "Your Kevel API Key.",
+				Description: "Your Kevel API Key. This can also be set via the KEVEL_API_KEY environment variable.",
 				Optional:    true,
 				Sensitive:   true,
 			},
@@ -66,7 +66,12 @@ func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureReq
 	if !data.ApiBaseUrl.IsNull() {
 		apiBaseUrl = data.ApiBaseUrl.ValueString()
 	} else {
-		apiBaseUrl = "https://api.kevel.co/"
+		kevelApiBaseUrl, found := os.LookupEnv("KEVEL_API_BASE_URL")
+		if found {
+			apiBaseUrl = kevelApiBaseUrl
+		} else {
+			apiBaseUrl = "https://api.kevel.co/"
+		}
 	}
 
 	if apiBaseUrl == "" {
@@ -92,7 +97,7 @@ func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureReq
 		return
 	}
 
-	client, err := adzerkManagementSdk.NewClientWithResponses(apiBaseUrl, adzerkManagementSdk.WithRequestEditorFn(apiKeySecurityProvider.Intercept))
+	client, err := adzerk.NewClientWithResponses(apiBaseUrl, adzerk.WithRequestEditorFn(apiKeySecurityProvider.Intercept))
 	if err != nil {
 		resp.Diagnostics.AddError("Error configuring client", err.Error())
 		return

@@ -2,21 +2,25 @@ package provider
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
-func setStateWithChannelSiteMap(s *tfsdk.State, ctx context.Context, channelSiteMap *kevelManagementClient.ChannelSiteMap) diag.Diagnostics {
+func setStateWithChannelSiteMap(s *tfsdk.State, ctx context.Context, channelSiteMap *adzerk.ChannelSiteMap) diag.Diagnostics {
 	diags := diag.Diagnostics{}
 
 	if channelSiteMap == nil {
 		diags.AddError("Error", "channel site map is nil")
 		return diags
 	}
+
+	id := fmt.Sprintf("%d:%d", channelSiteMap.ChannelId, channelSiteMap.SiteId)
+	SetStringStateAttribute(s, ctx, path.Root("id"), id, &diags)
 
 	SetInt64StateAttributeFromInt32(s, ctx, path.Root("channel_id"), channelSiteMap.ChannelId, &diags)
 	SetInt64StateAttributeFromInt32(s, ctx, path.Root("site_id"), channelSiteMap.SiteId, &diags)

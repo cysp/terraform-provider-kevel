@@ -3,25 +3,26 @@ package provider
 import (
 	"github.com/hashicorp/terraform-plugin-framework/types"
 
-	kevelManagementClient "github.com/cysp/adzerk-management-sdk-go"
+	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )
 
 type channelSiteMapResourceModel struct {
-	ChannelId types.Int64 `tfsdk:"channel_id"`
-	SiteId    types.Int64 `tfsdk:"site_id"`
-	Priority  types.Int64 `tfsdk:"priority"`
+	Id        types.String `tfsdk:"id"`
+	ChannelId types.Int64  `tfsdk:"channel_id"`
+	SiteId    types.Int64  `tfsdk:"site_id"`
+	Priority  types.Int64  `tfsdk:"priority"`
 }
 
-func (m *channelSiteMapResourceModel) createRequestBody() kevelManagementClient.CreateChannelSiteMapJSONRequestBody {
-	return kevelManagementClient.CreateChannelSiteMapJSONRequestBody{
+func (m *channelSiteMapResourceModel) createRequestBody() adzerk.CreateChannelSiteMapJSONRequestBody {
+	return adzerk.CreateChannelSiteMapJSONRequestBody{
 		ChannelId: int32(m.ChannelId.ValueInt64()),
 		SiteId:    int32(m.SiteId.ValueInt64()),
 		Priority:  int32(m.Priority.ValueInt64()),
 	}
 }
 
-func (m *channelSiteMapResourceModel) updateRequestBody() kevelManagementClient.UpdateChannelSiteMapJSONRequestBody {
-	return kevelManagementClient.UpdateChannelSiteMapJSONRequestBody{
+func (m *channelSiteMapResourceModel) updateRequestBody() adzerk.UpdateChannelSiteMapJSONRequestBody {
+	return adzerk.UpdateChannelSiteMapJSONRequestBody{
 		ChannelId: int32(m.ChannelId.ValueInt64()),
 		SiteId:    int32(m.SiteId.ValueInt64()),
 		Priority:  int32(m.Priority.ValueInt64()),
