@@ -3,12 +3,12 @@
 page_title: "kevel Provider"
 subcategory: ""
 description: |-
-  
+  The "kevel" provider allows the configuration of inventory items within the Kevel https://www.kevel.com ad server platform.
 ---
 
 # kevel Provider
 
-
+The "kevel" provider allows the configuration of inventory items within the [Kevel](https://www.kevel.com) ad server platform.
 
 ## Example Usage
 

@@ -40,6 +40,7 @@ func (p *KevelProvider) Metadata(ctx context.Context, req provider.MetadataReque
 
 func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		Description: "The \"kevel\" provider allows the configuration of inventory items within the [Kevel](https://www.kevel.com) ad server platform.",
 		Attributes: map[string]schema.Attribute{
 			"api_base_url": schema.StringAttribute{
 				Description: "The base URL of the Kevel API. This can also be set via the KEVEL_API_BASE_URL environment variable.",
