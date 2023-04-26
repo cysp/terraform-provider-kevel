@@ -113,6 +113,7 @@ func (p *KevelProvider) Resources(ctx context.Context) []func() resource.Resourc
 		NewAdTypeResource,
 		NewChannelResource,
 		NewChannelSiteMapResource,
+		NewCreativeTemplateResource,
 		NewSiteResource,
 	}
 }

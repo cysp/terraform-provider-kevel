@@ -12,12 +12,28 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/types/basetypes"
 )
 
+func NewInt64ValueFromInt32(value int32) basetypes.Int64Value {
+	return basetypes.NewInt64Value(int64(value))
+}
+
 func NewInt64ValueFromInt32Pointer(value *int32) basetypes.Int64Value {
 	if value == nil {
 		return basetypes.NewInt64Null()
 	}
 
-	return basetypes.NewInt64Value(int64(*value))
+	return NewInt64ValueFromInt32(*value)
+}
+
+func NewStringValueFromString(value string) basetypes.StringValue {
+	return basetypes.NewStringValue(value)
+}
+
+func NewStringValueFromStringPointer(value *string) basetypes.StringValue {
+	if value == nil {
+		return basetypes.NewStringNull()
+	}
+
+	return NewStringValueFromString(*value)
 }
 
 func AddInt64ValueToMap(m *map[string]interface{}, key string, value basetypes.Int64Value) {

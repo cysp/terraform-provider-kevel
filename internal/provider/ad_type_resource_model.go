@@ -13,6 +13,15 @@ type adTypeResourceModel struct {
 	Height types.Int64  `tfsdk:"height"`
 }
 
+func adTypeResourceModelFromAdType(adType *adzerk.AdType) adTypeResourceModel {
+	return adTypeResourceModel{
+		Id:     NewInt64ValueFromInt32(adType.Id),
+		Name:   NewStringValueFromStringPointer(adType.Name),
+		Width:  NewInt64ValueFromInt32(adType.Width),
+		Height: NewInt64ValueFromInt32(adType.Height),
+	}
+}
+
 func (m *adTypeResourceModel) createRequestBody() adzerk.CreateAdTypeJSONRequestBody {
 	return adzerk.CreateAdTypeJSONRequestBody{
 		Width:  int32(m.Width.ValueInt64()),
