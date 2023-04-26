@@ -114,6 +114,7 @@ func (p *KevelProvider) Resources(ctx context.Context) []func() resource.Resourc
 		NewChannelResource,
 		NewChannelSiteMapResource,
 		NewSiteResource,
+		NewUserResource,
 	}
 }
 
