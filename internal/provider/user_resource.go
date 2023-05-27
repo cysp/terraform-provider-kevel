@@ -54,6 +54,7 @@ func (r *userResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 			"name": schema.StringAttribute{
 				Description: "Name of the user",
 				Optional:    true,
+				Computed:    true,
 				PlanModifiers: []planmodifier.String{
 					stringplanmodifier.UseStateForUnknown(),
 				},
@@ -61,6 +62,7 @@ func (r *userResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 			"access_level": schema.StringAttribute{
 				Description: "Access level of the user",
 				Optional:    true,
+				Computed:    true,
 				Validators: []validator.String{
 					stringvalidator.OneOf(string(adzerk.Admn), string(adzerk.Amgr), string(adzerk.Edit), string(adzerk.Read)),
 				},
@@ -71,6 +73,7 @@ func (r *userResource) Schema(_ context.Context, _ resource.SchemaRequest, resp 
 			"can_access_studio": schema.BoolAttribute{
 				Description: "Whether or not the user can access Studio",
 				Optional:    true,
+				Computed:    true,
 			},
 		},
 	}
