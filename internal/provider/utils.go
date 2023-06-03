@@ -44,6 +44,10 @@ func AddStringValueToMap(m *map[string]interface{}, key string, value basetypes.
 	}
 }
 
+func SetBoolStateAttribute(s *tfsdk.State, ctx context.Context, path path.Path, value bool, diags *diag.Diagnostics) {
+	diags.Append(s.SetAttribute(ctx, path, (value))...)
+}
+
 func SetInt64StateAttributeFromInt32(s *tfsdk.State, ctx context.Context, path path.Path, value int32, diags *diag.Diagnostics) {
 	diags.Append(s.SetAttribute(ctx, path, int64(value))...)
 }
