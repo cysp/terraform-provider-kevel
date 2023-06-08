@@ -30,5 +30,3 @@ resource "kevel_site" "example" {
 ### Read-Only
 
 - `id` (Number) Numeric identifier of the site
-
-

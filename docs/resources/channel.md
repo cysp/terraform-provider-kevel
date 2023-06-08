@@ -32,5 +32,3 @@ resource "kevel_channel" "example" {
 ### Read-Only
 
 - `id` (Number) Numeric identifier of the channel
-
-
