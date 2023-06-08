@@ -32,5 +32,3 @@ resource "kevel_channel_site_map" "example" {
 ### Read-Only
 
 - `id` (String) Composite identifier of the channel site map
-
-

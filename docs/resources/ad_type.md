@@ -34,5 +34,3 @@ resource "kevel_ad_type" "example" {
 ### Read-Only
 
 - `id` (Number) Numeric identifier of the ad type
-
-
