@@ -6,7 +6,7 @@ require (
 	github.com/cysp/adzerk-management-sdk-go v0.0.0-20230603012049-86ebe6ad5538
 	github.com/deepmap/oapi-codegen v1.13.0
 	github.com/hashicorp/terraform-plugin-docs v0.15.0
-	github.com/hashicorp/terraform-plugin-framework v1.3.0
+	github.com/hashicorp/terraform-plugin-framework v1.3.1
 	github.com/hashicorp/terraform-plugin-go v0.15.0
 	github.com/hashicorp/terraform-plugin-testing v1.3.0
 )
