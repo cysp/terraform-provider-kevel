@@ -1,0 +1,27 @@
+{
+    "version": "0.1",
+    "provider": {
+        "name": "kevel",
+        "schema": {
+            "attributes": [
+                {
+                    "name": "api_base_url",
+                    "string": {
+                        "description": "The base URL of the Kevel API. This can also be set via the KEVEL_API_BASE_URL environment variable.",
+                        "optional_required": "optional"
+                    }
+                },
+                {
+                    "name": "api_key",
+                    "string": {
+                        "description": "Your Kevel API Key. This can also be set via the KEVEL_API_KEY environment variable.",
+                        "optional_required": "optional",
+                        "sensitive": true
+                    }
+                }
+            ]
+        }
+    },
+    "resources": [],
+    "datasources": []
+}

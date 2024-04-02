@@ -7,11 +7,10 @@ import (
 	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
-	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/types"
 
 	adzerk "github.com/cysp/adzerk-management-sdk-go"
+	"github.com/cysp/terraform-provider-kevel/internal/provider/provider_kevel"
 )
 
 // Ensure KevelProvider satisfies various provider interfaces.
@@ -27,36 +26,19 @@ type KevelProvider struct {
 	version string
 }
 
-// KevelProviderModel describes the provider data model.
-type KevelProviderModel struct {
-	ApiBaseUrl types.String `tfsdk:"api_base_url"`
-	ApiKey     types.String `tfsdk:"api_key"`
-}
-
 func (p *KevelProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "kevel"
 	resp.Version = p.version
 }
 
 func (p *KevelProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		Description: "The \"kevel\" provider allows the configuration of inventory items within the [Kevel](https://www.kevel.com) ad server platform.",
-		Attributes: map[string]schema.Attribute{
-			"api_base_url": schema.StringAttribute{
-				Description: "The base URL of the Kevel API. This can also be set via the KEVEL_API_BASE_URL environment variable.",
-				Optional:    true,
-			},
-			"api_key": schema.StringAttribute{
-				Description: "Your Kevel API Key. This can also be set via the KEVEL_API_KEY environment variable.",
-				Optional:    true,
-				Sensitive:   true,
-			},
-		},
-	}
+	resp.Schema = provider_kevel.KevelProviderSchema(ctx)
+	resp.Schema.Description = "The \"kevel\" provider allows the configuration of inventory items within the Kevel ad server platform."
+	resp.Schema.MarkdownDescription = "The \"kevel\" provider allows the configuration of inventory items within the [Kevel](https://www.kevel.com) ad server platform."
 }
 
 func (p *KevelProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data KevelProviderModel
+	var data provider_kevel.KevelModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 	if resp.Diagnostics.HasError() {
