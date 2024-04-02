@@ -6,11 +6,9 @@ import (
 
 	"github.com/hashicorp/terraform-plugin-framework/path"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/int64planmodifier"
-	"github.com/hashicorp/terraform-plugin-framework/resource/schema/planmodifier"
 
 	adzerk "github.com/cysp/adzerk-management-sdk-go"
+	"github.com/cysp/terraform-provider-kevel/internal/provider/resource_site"
 )
 
 var (
@@ -31,27 +29,9 @@ func (r *siteResource) Metadata(_ context.Context, req resource.MetadataRequest,
 	resp.TypeName = req.ProviderTypeName + "_site"
 }
 
-func (r *siteResource) Schema(_ context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
-	resp.Schema = schema.Schema{
-		Description: "Kevel Site",
-		Attributes: map[string]schema.Attribute{
-			"id": schema.Int64Attribute{
-				Description: "Numeric identifier of the site",
-				Computed:    true,
-				PlanModifiers: []planmodifier.Int64{
-					int64planmodifier.UseStateForUnknown(),
-				},
-			},
-			"title": schema.StringAttribute{
-				Description: "Title of the site",
-				Required:    true,
-			},
-			"url": schema.StringAttribute{
-				Description: "URL of the site",
-				Required:    true,
-			},
-		},
-	}
+func (r *siteResource) Schema(ctx context.Context, _ resource.SchemaRequest, resp *resource.SchemaResponse) {
+	resp.Schema = resource_site.SiteResourceSchema(ctx)
+	resp.Schema.Description = "Kevel Site"
 }
 
 func (r *siteResource) Configure(_ context.Context, req resource.ConfigureRequest, resp *resource.ConfigureResponse) {
@@ -69,14 +49,14 @@ func (r *siteResource) Configure(_ context.Context, req resource.ConfigureReques
 }
 
 func (r *siteResource) Create(ctx context.Context, req resource.CreateRequest, resp *resource.CreateResponse) {
-	var plan siteResourceModel
+	var plan resource_site.SiteModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	response, err := r.client.CreateSiteWithResponse(ctx, plan.createRequestBody())
+	response, err := r.client.CreateSiteWithResponse(ctx, plan.CreateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error creating site",
@@ -89,7 +69,7 @@ func (r *siteResource) Create(ctx context.Context, req resource.CreateRequest, r
 }
 
 func (r *siteResource) Read(ctx context.Context, req resource.ReadRequest, resp *resource.ReadResponse) {
-	var state siteResourceModel
+	var state resource_site.SiteModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
@@ -109,14 +89,14 @@ func (r *siteResource) Read(ctx context.Context, req resource.ReadRequest, resp 
 }
 
 func (r *siteResource) Update(ctx context.Context, req resource.UpdateRequest, resp *resource.UpdateResponse) {
-	var plan siteResourceModel
+	var plan resource_site.SiteModel
 
 	resp.Diagnostics.Append(req.Plan.Get(ctx, &plan)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.updateRequestBody())
+	response, err := r.client.UpdateSiteWithResponse(ctx, int32(plan.Id.ValueInt64()), plan.UpdateRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error updating Kevel Site",
@@ -129,14 +109,14 @@ func (r *siteResource) Update(ctx context.Context, req resource.UpdateRequest, r
 }
 
 func (r *siteResource) Delete(ctx context.Context, req resource.DeleteRequest, resp *resource.DeleteResponse) {
-	var state siteResourceModel
+	var state resource_site.SiteModel
 
 	resp.Diagnostics.Append(req.State.Get(ctx, &state)...)
 	if resp.Diagnostics.HasError() {
 		return
 	}
 
-	response, err := r.client.UpdateSiteWithResponse(ctx, int32(state.Id.ValueInt64()), state.deleteRequestBody())
+	response, err := r.client.UpdateSiteWithResponse(ctx, int32(state.Id.ValueInt64()), state.DeleteRequestBody())
 	if err != nil {
 		resp.Diagnostics.AddError(
 			"Error Deleting Kevel Site",

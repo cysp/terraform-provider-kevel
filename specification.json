@@ -22,6 +22,35 @@
             ]
         }
     },
-    "resources": [],
+    "resources": [
+        {
+            "name": "site",
+            "schema": {
+                "attributes": [
+                    {
+                        "name": "id",
+                        "int64": {
+                            "description": "Numeric identifier of the site",
+                            "computed_optional_required": "computed"
+                        }
+                    },
+                    {
+                        "name": "title",
+                        "string": {
+                            "description": "Title of the site",
+                            "computed_optional_required": "required"
+                        }
+                    },
+                    {
+                        "name": "url",
+                        "string": {
+                            "description": "URL of the site",
+                            "computed_optional_required": "required"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
     "datasources": []
 }
