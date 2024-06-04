@@ -4,7 +4,7 @@ go 1.22.1
 
 require (
 	github.com/cysp/adzerk-management-sdk-go v0.0.0-20240322043412-8ef71b688600
-	github.com/deepmap/oapi-codegen v1.16.2
+	github.com/deepmap/oapi-codegen v1.16.3
 	github.com/hashicorp/terraform-plugin-docs v0.19.3
 	github.com/hashicorp/terraform-plugin-framework v1.8.0
 	github.com/hashicorp/terraform-plugin-go v0.23.0
