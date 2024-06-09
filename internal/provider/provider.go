@@ -4,12 +4,12 @@ import (
 	"context"
 	"os"
 
-	"github.com/deepmap/oapi-codegen/pkg/securityprovider"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/oapi-codegen/oapi-codegen/v2/pkg/securityprovider"
 
 	adzerk "github.com/cysp/adzerk-management-sdk-go"
 )

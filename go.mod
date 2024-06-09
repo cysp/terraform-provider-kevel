@@ -3,12 +3,12 @@ module github.com/cysp/terraform-provider-kevel
 go 1.22.1
 
 require (
-	github.com/cysp/adzerk-management-sdk-go v0.0.0-20240609045941-0edead55c4b9
-	github.com/deepmap/oapi-codegen v1.16.3
+	github.com/cysp/adzerk-management-sdk-go v0.0.0-20240609053718-f9ca5704bf7b
 	github.com/hashicorp/terraform-plugin-docs v0.19.4
 	github.com/hashicorp/terraform-plugin-framework v1.9.0
 	github.com/hashicorp/terraform-plugin-go v0.23.0
 	github.com/hashicorp/terraform-plugin-testing v1.8.0
+	github.com/oapi-codegen/oapi-codegen/v2 v2.3.0
 )
 
 require (
